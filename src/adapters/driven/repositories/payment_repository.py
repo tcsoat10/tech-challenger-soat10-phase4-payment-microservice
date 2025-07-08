@@ -69,7 +69,7 @@ class PaymentRepository(IPaymentRepository):
         :return: Instância do pagamento.
         """
         if ObjectId.is_valid(payment_id) is False:
-            raise BadRequestException(f"Invalid payment ID: {payment_id}")
+            raise BadRequestException(f"ID de pagamento inválido: {payment_id}")
         
         payment_model = PaymentModel.objects(id=payment_id).first()
         if payment_model is None:
