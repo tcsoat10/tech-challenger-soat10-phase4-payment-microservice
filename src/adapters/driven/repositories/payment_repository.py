@@ -1,5 +1,6 @@
 
 from bson import ObjectId
+from src.core.exceptions.bad_request_exception import BadRequestException
 from src.adapters.driven.repositories.models.payment_status_model import PaymentStatusModel
 from src.adapters.driven.repositories.models.payment_model import PaymentModel
 from src.core.shared.identity_map import IdentityMap
@@ -68,7 +69,7 @@ class PaymentRepository(IPaymentRepository):
         :return: Instância do pagamento.
         """
         if ObjectId.is_valid(payment_id) is False:
-            raise ValueError(f"Invalid payment ID: {payment_id}")
+            raise BadRequestException(f"Invalid payment ID: {payment_id}")
         
         payment_model = PaymentModel.objects(id=payment_id).first()
         if payment_model is None:

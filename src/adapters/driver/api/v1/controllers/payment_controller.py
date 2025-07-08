@@ -49,7 +49,7 @@ class PaymentController:
         )
         payment = get_payment_by_id_use_case.execute(payment_id)
         if not payment:
-            raise EntityNotFoundException("Pagamento não encontrado para o ID informado.")
+            raise EntityNotFoundException(message="Pagamento não encontrado para o ID informado.")
         return DTOPresenter.transform(payment, QrCodePaymentDTO)
 
     def payment_provider_webhook(self, payload: dict) -> dict:
