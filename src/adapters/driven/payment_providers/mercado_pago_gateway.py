@@ -26,7 +26,7 @@ class MercadoPagoGateway(IPaymentProviderGateway):
         """
         payload = {
             "external_reference": payment_data.get("external_reference", ""),
-            "notification_url": payment_data.get("notification_url", ""),
+            "notification_url": payment_data.get("payment_notification_url", ""),
             "total_amount": payment_data.get("total_amount", 0.0),
             "items": payment_data.get("items", []),
             "title": payment_data.get("title", ""),
