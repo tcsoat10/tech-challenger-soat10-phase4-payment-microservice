@@ -1,4 +1,6 @@
 
+from bson import ObjectId
+from src.core.exceptions.bad_request_exception import BadRequestException
 from src.adapters.driven.repositories.models.payment_status_model import PaymentStatusModel
 from src.adapters.driven.repositories.models.payment_model import PaymentModel
 from src.core.shared.identity_map import IdentityMap
@@ -66,12 +68,25 @@ class PaymentRepository(IPaymentRepository):
         :param payment_id: ID do pagamento.
         :return: Instância do pagamento.
         """
+        if ObjectId.is_valid(payment_id) is False:
+            raise BadRequestException(f"ID de pagamento inválido: {payment_id}")
+        
         payment_model = PaymentModel.objects(id=payment_id).first()
         if payment_model is None:
             return None
 
         return payment_model.to_entity()
-        
+
+    def get_payment_by_transaction_id(self, transaction_id: str) -> Payment:
+        """
+        Recupera os detalhes de um pagamento pelo ID da transação.
+        :param transaction_id: ID da transação do pagamento.
+        :return: Instância do pagamento.
+        """
+        payment_model = PaymentModel.objects(transaction_id=transaction_id).first()
+        if payment_model is None:
+            return None
+        return payment_model.to_entity()        
 
     def get_payment_by_reference(self, external_reference: str) -> Payment:
         """

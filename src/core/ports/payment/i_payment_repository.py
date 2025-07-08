@@ -29,7 +29,17 @@ class IPaymentRepository(ABC):
         pass
 
     @abstractmethod
-    def get_payment_by_id(self, payment_id: int) -> Payment:
+    def get_payment_by_transaction_id(self, transaction_id: str) -> Payment:
+        """
+        Recupera os detalhes de um pagamento pelo ID.
+        
+        :param payment_id: ID do pagamento.
+        :return: Dicionário contendo os detalhes do pagamento.
+        """
+        pass
+
+    @abstractmethod
+    def get_payment_by_id(self, payment_id: str) -> Payment:
         """
         Recupera os detalhes de um pagamento pelo ID.
         

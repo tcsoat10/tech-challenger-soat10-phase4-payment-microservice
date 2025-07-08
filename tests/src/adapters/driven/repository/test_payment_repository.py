@@ -62,16 +62,6 @@ class TestPaymentRepository:
         with pytest.raises(ValidationError):
             self.payment_gateway.create_payment(payment)
 
-    def test_get_payment_by_id_success(self):
-        payment = PaymentFactory()
-
-        data = self.payment_gateway.get_payment_by_id(payment.id)
-
-        assert data is not None
-        assert data.id == payment.id
-        assert data.payment_method.id == payment.payment_method.id
-        assert data.payment_status.id == payment.payment_status.id
-
     def test_get_payment_by_id_returns_none_unregistered_id(self):
         from bson import ObjectId
         fake_id = ObjectId()
@@ -146,3 +136,39 @@ class TestPaymentRepository:
         data = self.payment_gateway.get_payment_by_reference(payment.external_reference + "1")
 
         assert data is None
+        
+    def test_get_payment_by_transaction_id_success(self):
+        payment = PaymentFactory()
+
+        data = self.payment_gateway.get_payment_by_transaction_id(payment.transaction_id)
+
+        assert data is not None
+        assert data.id == payment.id
+        assert data.transaction_id == payment.transaction_id
+    
+    def test_get_payment_by_transaction_id_returns_none_unregistered_transaction_id(self):
+        payment = PaymentFactory()
+
+        data = self.payment_gateway.get_payment_by_transaction_id(payment.transaction_id + "1")
+
+        assert data is None
+    
+    def test_get_payment_by_id_success(self):
+        payment = PaymentFactory()
+
+        data = self.payment_gateway.get_payment_by_id(payment.id)
+
+        assert data is not None
+        assert data.id == payment.id
+        assert data.external_reference == payment.external_reference
+        assert data.transaction_id == payment.transaction_id
+        assert data.qr_code == payment.qr_code
+        assert data.amount == payment.amount
+        assert data.payment_method.id == payment.payment_method.id
+        assert data.payment_status.id == payment.payment_status.id
+
+    def test_get_payment_by_id_invalid_id(self):
+        with pytest.raises(ValueError) as exc_info:
+            self.payment_gateway.get_payment_by_id(123)
+
+        assert str(exc_info.value) == "Invalid payment ID: 123"

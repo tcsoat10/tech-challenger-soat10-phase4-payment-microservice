@@ -21,6 +21,26 @@ async def create_payment(
 ):
     return controller.process_payment(dto)
 
+@router.get(
+    "/payment/transaction/{transaction_id}",
+    response_model=QrCodePaymentDTO,
+    status_code=status.HTTP_200_OK,
+)
+@inject
+async def get_payment_by_transaction_id(
+    transaction_id: str,
     controller: PaymentController = Depends(Provide[Container.payment_controller]),
 ):
-    return controller.process_payment(payment_method)
+    return controller.get_payment_by_transaction_id(transaction_id)
+
+@router.get(
+    "/payment/id/{payment_id}",
+    response_model=QrCodePaymentDTO,
+    status_code=status.HTTP_200_OK,
+)
+@inject
+async def get_payment_by_id(
+    payment_id: str,
+    controller: PaymentController = Depends(Provide[Container.payment_controller]),
+):
+    return controller.get_payment_by_id(payment_id)
