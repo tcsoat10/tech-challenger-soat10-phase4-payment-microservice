@@ -64,13 +64,13 @@ class ProcessPaymentUseCase:
             "payment_notification_url": f"{WEBHOOK_URL}/api/v1/webhook/payment",
             "items": [
                 {
-                    "title": item["name"],
-                    "description": item['description'],
-                    "category": item['category'],
-                    "quantity": item['quantity'],
-                    "unit_price": item['unit_price'],
+                    "title": item.name,
+                    "description": item.description,
+                    "category": item.category,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
                     "unit_measure": "unit",
-                    "total_amount": item['unit_price'] * item['quantity'],
+                    "total_amount": item.unit_price * item.quantity,
                 }
                 for item in dto.items
             ],
