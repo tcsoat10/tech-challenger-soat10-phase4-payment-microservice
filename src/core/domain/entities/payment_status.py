@@ -9,7 +9,7 @@ class PaymentStatus(BaseEntity):
         name: str,
         description: str,
         payments: list = [],
-        id: Optional[int] = None,
+        id: Optional[str] = None,
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         inactivated_at: Optional[str] = None

@@ -1,3 +1,4 @@
+from src.core.domain.dtos.payment.create_payment_dto import CreatePaymentDTO
 from src.application.usecases.payment_usecase.payment_provider_webhook_handler_use_case import PaymentProviderWebhookHandlerUseCase
 from src.adapters.driver.api.v1.presenters.dto_presenter import DTOPresenter
 from src.core.domain.dtos.payment.qr_code_payment_dto import QrCodePaymentDTO
@@ -22,15 +23,16 @@ class PaymentController:
         self.payment_status_gateway: IPaymentStatusRepository = payment_status_gateway
         self.payment_method_gateway: IPaymentMethodRepository = payment_method_gateway
         
-    def process_payment(self, method_payment: str) -> QrCodePaymentDTO:
+    def process_payment(self, dto: CreatePaymentDTO) -> QrCodePaymentDTO:
         process_payment_use_case = ProcessPaymentUseCase.build(
             payment_gateway=self.payment_gateway,
             payment_status_gateway=self.payment_status_gateway,
             payment_method_gateway=self.payment_method_gateway,
             payment_provider_gateway=self.payment_provider_gateway,
         )
-        payment = process_payment_use_case.execute(method_payment)
-        return DTOPresenter.transform_from_dict(payment, QrCodePaymentDTO)
+        payment = process_payment_use_case.execute(dto)
+        return DTOPresenter.transform(payment, QrCodePaymentDTO)
+
 
     def payment_provider_webhook(self, payload: dict) -> dict:
         payment_provider_webhook_use_case = PaymentProviderWebhookHandlerUseCase.build(

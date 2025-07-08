@@ -12,12 +12,11 @@ class Payment(BaseEntity):
         self, 
         amount: float,
         external_reference: str,
+        id: Optional[str] = None,
         qr_code: Optional[str] = None,
         transaction_id: Optional[str] = None,
         payment_method: PaymentMethod = None, 
         payment_status: PaymentStatus = None,
-        order: list = None,
-        id: Optional[int] = None,
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         inactivated_at: Optional[str] = None
@@ -29,8 +28,7 @@ class Payment(BaseEntity):
         self._external_reference = external_reference
         self._qr_code = qr_code
         self._transaction_id = transaction_id
-        self._order = order
-    
+
     @property
     def payment_method(self):
         return self._payment_method
@@ -75,14 +73,6 @@ class Payment(BaseEntity):
         if not value:
             raise ValueError("QR code cannot be empty")
         self._qr_code = value
-        
-    @property
-    def order(self):
-        return self._order
-
-    @order.setter
-    def order(self, value):
-        self._order = value
 
     @property
     def transaction_id(self):
