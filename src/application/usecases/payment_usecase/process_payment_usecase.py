@@ -54,6 +54,7 @@ class ProcessPaymentUseCase:
             payment_status=payment_status,
             amount=dto.total_amount,
             external_reference=f"order-{str(uuid.uuid4())}",
+            notification_url=dto.notification_url,
         )
 
         payment_data = {

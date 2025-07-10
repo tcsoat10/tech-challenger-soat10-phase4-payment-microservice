@@ -1,3 +1,4 @@
+from src.core.ports.notification.i_notification_service import INotificationService
 from src.application.usecases.payment_usecase.get_payment_by_id_usecase import GetPaymentByIdUseCase
 from src.application.usecases.payment_usecase.get_payment_by_transaction_id_usecase import GetPaymentByTransactionIdUseCase
 from src.core.domain.dtos.payment.create_payment_dto import CreatePaymentDTO
@@ -19,12 +20,14 @@ class PaymentController:
         payment_provider_gateway: IPaymentProviderGateway, 
         payment_gateway: IPaymentRepository, 
         payment_status_gateway: IPaymentStatusRepository, 
-        payment_method_gateway: IPaymentMethodRepository
+        payment_method_gateway: IPaymentMethodRepository,
+        notification_service: INotificationService,
     ):
         self.payment_provider_gateway: IPaymentProviderGateway = payment_provider_gateway
         self.payment_gateway: IPaymentRepository = payment_gateway
         self.payment_status_gateway: IPaymentStatusRepository = payment_status_gateway
         self.payment_method_gateway: IPaymentMethodRepository = payment_method_gateway
+        self.notification_service: INotificationService = notification_service
         
     def process_payment(self, dto: CreatePaymentDTO) -> QrCodePaymentDTO:
         process_payment_use_case = ProcessPaymentUseCase.build(
@@ -56,7 +59,8 @@ class PaymentController:
         payment_provider_webhook_use_case = PaymentProviderWebhookHandlerUseCase.build(
             self.payment_provider_gateway,
             self.payment_gateway,
-            self.payment_status_gateway
+            self.payment_status_gateway,
+            self.notification_service,
         )
         return payment_provider_webhook_use_case.execute(payload)
             
