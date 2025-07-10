@@ -8,6 +8,9 @@ class QrCodePaymentDTO(BaseModel):
     payment_id: str
     transaction_id: str
     qr_code_link: str
+    
+    # optional
+    external_reference: str = None
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'QrCodePaymentDTO':
@@ -22,5 +25,6 @@ class QrCodePaymentDTO(BaseModel):
         return cls(
             payment_id=str(entity.id),
             transaction_id=entity.transaction_id,
-            qr_code_link=entity.qr_code
+            qr_code_link=entity.qr_code,
+            external_reference=entity.external_reference or ""
         )

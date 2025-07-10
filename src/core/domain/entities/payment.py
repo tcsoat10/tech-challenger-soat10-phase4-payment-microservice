@@ -17,6 +17,8 @@ class Payment(BaseEntity):
         transaction_id: Optional[str] = None,
         payment_method: PaymentMethod = None, 
         payment_status: PaymentStatus = None,
+        notification_url: Optional[str] = None,
+        client_notified: bool = False,
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         inactivated_at: Optional[str] = None
@@ -28,6 +30,8 @@ class Payment(BaseEntity):
         self._external_reference = external_reference
         self._qr_code = qr_code
         self._transaction_id = transaction_id
+        self._notification_url = notification_url
+        self._client_notified = client_notified
 
     @property
     def payment_method(self):
@@ -84,7 +88,28 @@ class Payment(BaseEntity):
         if not value:
             raise ValueError("Transaction ID cannot be empty")
         self._transaction_id = value
+        
+    @property
+    def notification_url(self):
+        return self._notification_url
     
+    @notification_url.setter
+    def notification_url(self, value: str):
+        value = value.strip()
+        if not value:
+            raise ValueError("Notification URL cannot be empty")
+        self._notification_url = value
+    
+    @property
+    def client_notified(self) -> bool:
+        return self._client_notified
+    
+    def mark_client_notified(self):
+        if self._client_notified:
+            raise ValueError("Client has already been notified.")
+
+        self._client_notified = True
+
     def is_pending(self) -> bool:
         return self._payment_status.name == PaymentStatusEnum.PAYMENT_PENDING.status
 

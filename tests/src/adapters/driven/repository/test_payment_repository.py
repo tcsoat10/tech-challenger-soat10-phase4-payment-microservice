@@ -2,6 +2,7 @@ import pytest
 
 from mongoengine.errors import ValidationError
 
+from src.core.exceptions.bad_request_exception import BadRequestException
 from src.adapters.driven.repositories.models.payment_method_model import PaymentMethodModel
 from src.adapters.driven.repositories.models.payment_status_model import PaymentStatusModel
 from src.adapters.driven.repositories.models.payment_model import PaymentModel
@@ -168,7 +169,7 @@ class TestPaymentRepository:
         assert data.payment_status.id == payment.payment_status.id
 
     def test_get_payment_by_id_invalid_id(self):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(BadRequestException) as exc_info:
             self.payment_gateway.get_payment_by_id(123)
 
-        assert str(exc_info.value) == "Invalid payment ID: 123"
+        assert str(exc_info.value) == "ID de pagamento inválido: 123"

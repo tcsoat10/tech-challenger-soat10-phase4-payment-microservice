@@ -1,4 +1,4 @@
-from mongoengine import StringField, FloatField, ReferenceField
+from mongoengine import StringField, FloatField, ReferenceField, BooleanField
 from src.adapters.driven.repositories.models.base_model import BaseModel
 from src.core.domain.entities.payment import Payment
 from src.core.shared.identity_map import IdentityMap
@@ -19,6 +19,9 @@ class PaymentModel(BaseModel):
     qr_code = StringField(max_length=500, required=False)
     transaction_id = StringField(max_length=100, required=False)
     
+    notification_url = StringField(required=False)
+    client_notified = BooleanField(default=False)
+
     @classmethod
     def from_entity(cls, payment: BaseEntity):
         payment_method_id = payment.payment_method.id if payment.payment_method else None
@@ -37,6 +40,8 @@ class PaymentModel(BaseModel):
             external_reference=payment.external_reference,
             qr_code=payment.qr_code,
             transaction_id=payment.transaction_id,
+            notification_url=payment.notification_url,
+            client_notified=payment.client_notified,
             id=payment.id,
             created_at=payment.created_at,
             updated_at=payment.updated_at,
@@ -55,6 +60,8 @@ class PaymentModel(BaseModel):
             external_reference=self.external_reference,
             qr_code=self.qr_code,
             transaction_id=self.transaction_id,
+            notification_url=self.notification_url,
+            client_notified=self.client_notified,
             created_at=self.created_at,  
             updated_at=self.updated_at,
             inactivated_at=self.inactivated_at,
