@@ -61,6 +61,7 @@ class PaymentModel(BaseModel):
             qr_code=self.qr_code,
             transaction_id=self.transaction_id,
             notification_url=self.notification_url,
+            client_notified=self.client_notified,
             created_at=self.created_at,  
             updated_at=self.updated_at,
             inactivated_at=self.inactivated_at,
