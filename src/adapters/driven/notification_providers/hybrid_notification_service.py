@@ -10,8 +10,8 @@ class HybridNotificationService(INotificationService):
     Respeitando os princípios da Clean Architecture
     """
     
-    def __init__(self, services: Dict[str, INotificationService] = {}):
-        self._services = services
+    def __init__(self, services: Dict[str, INotificationService] = None):
+        self._services = services if services is not None else {}
     
     def send_payment_notification(self, notification_url: str, payment_data: Dict[str, Any]) -> bool:
         """
