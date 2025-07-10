@@ -98,4 +98,23 @@ class PaymentRepository(IPaymentRepository):
         if payment_model is None:
             return None
         return payment_model.to_entity()
-        
+    
+    def update_payment(self, payment: Payment) -> Payment:
+        """
+        Atualiza um pagamento existente na coleção `payments`.
+        :param payment: Instância do pagamento a ser atualizado.
+        :return: Instância do pagamento atualizado.
+        """
+        if payment.id is None:
+            raise ValueError("Payment ID is required for update.")
+
+        existing_payment = self.identity_map.get(Payment, payment.id)
+        if existing_payment is not None:
+            self.identity_map.remove(payment)
+
+        payment_model = PaymentModel.from_entity(payment)
+        payment_model.save()
+        return payment_model.to_entity()
+    
+    
+__all__ = ['PaymentRepository']

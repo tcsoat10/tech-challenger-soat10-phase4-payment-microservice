@@ -19,7 +19,7 @@ class IPaymentRepository(ABC):
         pass
 
     @abstractmethod
-    def update_payment_status(self, payment: Payment, status_id: int) -> None:
+    def update_payment_status(self, payment: Payment, status_id: int) -> Payment:
         """
         Atualiza o status de um pagamento na tabela `payments`.
         
@@ -55,5 +55,15 @@ class IPaymentRepository(ABC):
         
         :param external_reference: Referência externa do pagamento.
         :return: Dicionário contendo os detalhes do pagamento.
+        """
+        pass
+    
+    @abstractmethod
+    def update_payment(self, payment: Payment) -> Payment:
+        """
+        Atualiza um pagamento existente na tabela `payments`.
+        
+        :param payment: Instância do pagamento a ser atualizado.
+        :return: Instância do pagamento atualizado.
         """
         pass
