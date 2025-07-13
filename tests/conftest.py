@@ -19,6 +19,7 @@ def setup_test_environment():
     os.environ['MONGO_PORT'] = '27017'
     os.environ['MONGO_USER'] = ''
     os.environ['MONGO_PASSWORD'] = ''
+    os.environ['PAYMENT_MICROSERVICE_X_API_KEY'] = 'test_api_key'
 
     # Celery config celery for tests
     os.environ['CELERY_TASK_ALWAYS_EAGER'] = 'True'
