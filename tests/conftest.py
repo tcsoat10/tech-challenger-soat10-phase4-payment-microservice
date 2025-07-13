@@ -74,7 +74,8 @@ def client(mongo_db) -> Generator[TestClient, None, None]:
             mock_connect.return_value = None
             mock_disconnect.return_value = None
             
-            with TestClient(app) as test_client:
+            headers = {"x-api-key": "test_api_key"}
+            with TestClient(app, headers=headers) as test_client:
                 yield test_client
 
 
