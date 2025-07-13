@@ -173,3 +173,27 @@ class TestPaymentRepository:
             self.payment_gateway.get_payment_by_id(123)
 
         assert str(exc_info.value) == "ID de pagamento inválido: 123"
+        
+    def test_update_payment_success(self):
+        payment = PaymentFactory()
+        payment.external_reference="updated_reference"
+        payment.transaction_id="updated_transaction"
+        payment.qr_code="updated_qr_code"
+        payment.amount=200.0
+
+        result = self.payment_gateway.update_payment(payment)
+
+        assert result.id == payment.id
+        assert result.external_reference == "updated_reference"
+        assert result.transaction_id == "updated_transaction"
+        assert result.qr_code == "updated_qr_code"
+        assert result.amount == 200.0
+        assert result.payment_method.id == payment.payment_method.id
+        assert result.payment_status.id == payment.payment_status.id
+        
+    def test_update_payment_invalid_data_raises_error(self):
+        payment = PaymentFactory()
+        payment.external_reference=None
+        
+        with pytest.raises(ValidationError):
+            self.payment_gateway.update_payment(payment)
