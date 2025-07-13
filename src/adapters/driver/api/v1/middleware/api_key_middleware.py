@@ -7,15 +7,25 @@ from starlette.routing import Match
 
 class ApiKeyMiddleware(BaseHTTPMiddleware):
     """Middleware para validar a chave de API (x-api-key) nas requisições."""
+
+    EXCLUDED_PATHS = [
+        "/docs",
+        "/redoc",
+        "/openapi.json",
+        "/favicon.ico",
+        "/docs/oauth2-redirect"
+    ]
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        # Bypass para as rotas de documentação
+        if request.url.path in self.EXCLUDED_PATHS:
+            return await call_next(request)
+
+        # Verifica se a rota atual deve ignorar a autenticação por chave de API
         for route in request.app.routes:
             match, _ = route.matches(request.scope)
             if match == Match.FULL:
-                if hasattr(route.endpoint, 'bypass_auth') or route.path in [
-                    '/docs',
-                    '/redoc',
-                    '/openapi.json',
-                ]:
+                if hasattr(route.endpoint, 'bypass_auth'):
                     return await call_next(request)
                 break
 
