@@ -8,6 +8,7 @@ from src.adapters.driver.api.v1.routes.payment_method_routes import router as pa
 from src.adapters.driver.api.v1.routes.payment_status_routes import router as payment_status_routes
 from src.adapters.driver.api.v1.routes.payment_routes import router as payment_routes
 from src.adapters.driver.api.v1.routes.webhook_routes import router as webhook_routes
+from src.adapters.driver.api.v1.middleware.api_key_middleware import ApiKeyMiddleware
 from config.database import connect_db, disconnect_db
 
 @asynccontextmanager
@@ -26,6 +27,7 @@ app = FastAPI(
 container = Container()
 app.container = container
 
+app.add_middleware(ApiKeyMiddleware)
 app.add_middleware(CustomErrorMiddleware)
 app.add_middleware(IdentityMapMiddleware)
 
