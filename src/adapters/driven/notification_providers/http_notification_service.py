@@ -8,14 +8,11 @@ from tenacity import retry, stop_after_attempt, wait_fixed, before_sleep_log
 logger = logging.getLogger(__name__)
 
 class HttpNotificationService(INotificationService):
-    """Implementação de notificação via HTTP"""
-
     def __init__(self, timeout: int = 30):
         self.timeout = timeout
         self.max_retries = int(os.getenv('NOTIFICATION_MAX_RETRIES', 3))
         self.retry_delay = int(os.getenv('NOTIFICATION_RETRY_DELAY_SECONDS', 5))
 
-        # Aplica o decorador de retry dinamicamente ao método interno
         self._send_http_request_with_retry = retry(
             stop=stop_after_attempt(self.max_retries),
             wait=wait_fixed(self.retry_delay),
@@ -24,10 +21,6 @@ class HttpNotificationService(INotificationService):
         )(self._execute_http_request)
 
     def _execute_http_request(self, notification_url: str, payment_data: Dict[str, Any]) -> bool:
-        """
-        Executa a requisição HTTP para envio da notificação.
-        Este método é decorado com 'retry' no __init__.
-        """
         headers = {
             'Content-Type': 'application/json',
             'User-Agent': 'Payment-Microservice/1.0'
