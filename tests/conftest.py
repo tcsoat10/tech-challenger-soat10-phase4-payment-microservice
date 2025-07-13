@@ -19,6 +19,7 @@ def setup_test_environment():
     os.environ['MONGO_PORT'] = '27017'
     os.environ['MONGO_USER'] = ''
     os.environ['MONGO_PASSWORD'] = ''
+    os.environ['PAYMENT_MICROSERVICE_X_API_KEY'] = 'test_api_key'
 
     # Celery config celery for tests
     os.environ['CELERY_TASK_ALWAYS_EAGER'] = 'True'
@@ -73,7 +74,8 @@ def client(mongo_db) -> Generator[TestClient, None, None]:
             mock_connect.return_value = None
             mock_disconnect.return_value = None
             
-            with TestClient(app) as test_client:
+            headers = {"x-api-key": "test_api_key"}
+            with TestClient(app, headers=headers) as test_client:
                 yield test_client
 
 
