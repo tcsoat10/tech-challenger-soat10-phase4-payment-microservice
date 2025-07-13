@@ -78,7 +78,7 @@ def client(mongo_db) -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(scope="function")
-def container(mongo_db) -> Container:
+def container(mongo_db) -> Generator[Container, None, None]:
     """
     Cria um container de dependências para testes.
     """
