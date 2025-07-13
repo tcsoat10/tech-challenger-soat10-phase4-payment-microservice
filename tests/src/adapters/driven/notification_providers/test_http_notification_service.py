@@ -1,4 +1,3 @@
-import os
 import pytest
 import requests
 from unittest.mock import patch, MagicMock
@@ -12,11 +11,11 @@ def notification_service():
     service.max_retries = 3
     service.retry_delay = 0
 
-    service.send_payment_notification = retry(
+    service._send_http_request_with_retry = retry(
         stop=stop_after_attempt(service.max_retries),
         wait=wait_fixed(service.retry_delay),
         reraise=True
-    )(service._send_notification)
+    )(service._execute_http_request)
     
     return service
 
