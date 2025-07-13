@@ -10,25 +10,23 @@ logger = logging.getLogger(__name__)
 class HttpNotificationService(INotificationService):
     """Implementação de notificação via HTTP"""
 
-    MAX_RETRIES = int(os.getenv('NOTIFICATION_MAX_RETRIES', 3))
-    RETRY_DELAY = int(os.getenv('NOTIFICATION_RETRY_DELAY_SECONDS', 5))
-    
     def __init__(self, timeout: int = 30):
         self.timeout = timeout
+        self.max_retries = int(os.getenv('NOTIFICATION_MAX_RETRIES', 3))
+        self.retry_delay = int(os.getenv('NOTIFICATION_RETRY_DELAY_SECONDS', 5))
 
-    @retry(
-        stop=stop_after_attempt(MAX_RETRIES),
-        wait=wait_fixed(RETRY_DELAY),
-        before_sleep=before_sleep_log(logger, logging.INFO),
-        reraise=True
-    )
-    def send_payment_notification(self, notification_url: str, payment_data: Dict[str, Any]) -> bool:
+        # Aplica o decorador de retry dinamicamente ao método interno
+        self._send_http_request_with_retry = retry(
+            stop=stop_after_attempt(self.max_retries),
+            wait=wait_fixed(self.retry_delay),
+            before_sleep=before_sleep_log(logger, logging.INFO),
+            reraise=True
+        )(self._execute_http_request)
+
+    def _execute_http_request(self, notification_url: str, payment_data: Dict[str, Any]) -> bool:
         """
-        Envia notificação HTTP para a URL especificada
-        
-        :param notification_url: URL para enviar a notificação
-        :param payment_data: Dados do pagamento
-        :return: True se enviado com sucesso
+        Executa a requisição HTTP para envio da notificação.
+        Este método é decorado com 'retry' no __init__.
         """
         headers = {
             'Content-Type': 'application/json',
@@ -60,3 +58,6 @@ class HttpNotificationService(INotificationService):
         except requests.exceptions.RequestException as e:
             logger.warning(f"Falha ao enviar notificação para {notification_url}. Erro: {e}. Tentando novamente...")
             raise
+
+    def send_payment_notification(self, notification_url: str, payment_data: Dict[str, Any]) -> bool:
+        return self._send_http_request_with_retry(notification_url, payment_data)

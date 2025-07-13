@@ -83,4 +83,4 @@ def send_payment_notification_task(self, notification_url: str, payment_data: Di
         
     except requests.exceptions.RequestException as e:
         logger.error(f"Erro na task assíncrona {self.request.id}: {e}")
-        raise self.retry(exc=e)
+        raise e
