@@ -19,6 +19,14 @@ def setup_test_environment():
     os.environ['MONGO_PORT'] = '27017'
     os.environ['MONGO_USER'] = ''
     os.environ['MONGO_PASSWORD'] = ''
+
+    # Celery config celery for tests
+    os.environ['CELERY_TASK_ALWAYS_EAGER'] = 'True'
+    os.environ['CELERY_BROKER_URL'] = 'memory://'
+    os.environ['CELERY_RESULT_BACKEND'] = 'rpc://'
+    os.environ['CELERY_NOTIFICATION_MAX_RETRIES'] = '2'
+    os.environ['CELERY_NOTIFICATION_RETRY_DELAY_SECONDS'] = '0'
+
     yield
     # Cleanup after tests
     try:
@@ -70,7 +78,7 @@ def client(mongo_db) -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(scope="function")
-def container(mongo_db) -> Container:
+def container(mongo_db) -> Generator[Container, None, None]:
     """
     Cria um container de dependências para testes.
     """
