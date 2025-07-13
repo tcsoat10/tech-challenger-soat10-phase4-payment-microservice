@@ -11,7 +11,11 @@ class ApiKeyMiddleware(BaseHTTPMiddleware):
         for route in request.app.routes:
             match, _ = route.matches(request.scope)
             if match == Match.FULL:
-                if hasattr(route.endpoint, 'bypass_auth'):
+                if hasattr(route.endpoint, 'bypass_auth') or route.path in [
+                    '/docs',
+                    '/redoc',
+                    '/openapi.json',
+                ]:
                     return await call_next(request)
                 break
 
