@@ -9,15 +9,16 @@ logger = logging.getLogger(__name__)
 
 class HttpNotificationService(INotificationService):
     """Implementação de notificação via HTTP"""
+
+    MAX_RETRIES = int(os.getenv('NOTIFICATION_MAX_RETRIES', 3))
+    RETRY_DELAY = int(os.getenv('NOTIFICATION_RETRY_DELAY_SECONDS', 5))
     
     def __init__(self, timeout: int = 30):
         self.timeout = timeout
-        self.max_retries = int(os.getenv('NOTIFICATION_MAX_RETRIES', 3))
-        self.retry_delay = int(os.getenv('NOTIFICATION_RETRY_DELAY_SECONDS', 5))
 
     @retry(
-        stop=stop_after_attempt(int(os.getenv('NOTIFICATION_MAX_RETRIES', 3))),
-        wait=wait_fixed(int(os.getenv('NOTIFICATION_RETRY_DELAY_SECONDS', 5))),
+        stop=stop_after_attempt(MAX_RETRIES),
+        wait=wait_fixed(RETRY_DELAY),
         before_sleep=before_sleep_log(logger, logging.INFO),
         reraise=True
     )
