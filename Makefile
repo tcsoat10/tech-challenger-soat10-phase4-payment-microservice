@@ -28,7 +28,7 @@ dev:
 	@MONGO_HOST=localhost ./config/init_db/init_db.sh
 	@echo "Starting Uvicorn..."
 	@trap 'docker compose down --remove-orphans' INT TERM EXIT; \
-	MONGO_HOST=localhost uvicorn src.app:app --reload --host 0.0.0.0 --port 8000
+	MONGO_HOST=localhost uvicorn src.app:app --reload --host 0.0.0.0 --port 8001
 
 dev_with_celery:
 	@echo "Starting MongoDB and Redis containers..."
@@ -41,7 +41,7 @@ dev_with_celery:
 	@echo "Starting Uvicorn..."
 	@echo "Flower disponível em: http://localhost:5555"
 	@trap 'docker compose down --remove-orphans' INT TERM EXIT; \
-	MONGO_HOST=localhost REDIS_HOST=localhost uvicorn src.app:app --reload --host 0.0.0.0 --port 8000
+	MONGO_HOST=localhost REDIS_HOST=localhost uvicorn src.app:app --reload --host 0.0.0.0 --port 8001
 
 dev_full:
 	@echo "Starting all services with Flower..."
@@ -50,7 +50,7 @@ dev_full:
 	@sleep 20
 	@echo ""
 	@echo "Serviços disponíveis:"
-	@echo "- API: http://localhost:8000"
+	@echo "- API: http://localhost:8001"
 	@echo "- Flower: http://localhost:5555"
 	@echo "- MongoDB: localhost:27017"
 	@echo "- Redis: localhost:6379"
