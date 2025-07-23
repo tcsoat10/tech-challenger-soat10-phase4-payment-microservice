@@ -13,7 +13,8 @@ class ApiKeyMiddleware(BaseHTTPMiddleware):
         "/redoc",
         "/openapi.json",
         "/favicon.ico",
-        "/docs/oauth2-redirect"
+        "/docs/oauth2-redirect",
+        "/api/v1/health",
     ]
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
