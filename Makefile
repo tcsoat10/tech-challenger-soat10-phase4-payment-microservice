@@ -20,17 +20,6 @@ migrate_db:
 	poetry run python ./config/init_db/run_migrations.py
 
 dev:
-	@echo "Starting MongoDB container..."
-	@docker compose up -d --build payment-microservice-mongodb
-	@echo "Waiting for MongoDB to be ready..."
-	@sleep 10
-	@echo "Applying migrations..."
-	@MONGO_HOST=localhost ./config/init_db/init_db.sh
-	@echo "Starting Uvicorn..."
-	@trap 'docker compose down --remove-orphans' INT TERM EXIT; \
-	MONGO_HOST=localhost uvicorn src.app:app --reload --host 0.0.0.0 --port 8001
-
-dev_with_celery:
 	@echo "Starting MongoDB and Redis containers..."
 	@docker compose up -d payment-microservice-mongodb payment-microservice-redis \
 		celery-worker celery-beat celery-flower
