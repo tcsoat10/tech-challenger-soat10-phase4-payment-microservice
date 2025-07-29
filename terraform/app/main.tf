@@ -20,7 +20,25 @@ data "aws_eks_cluster_auth" "cluster" {
   name = var.cluster_name
 }
 
+resource "kubernetes_service" "payment_app_lb" {
+  metadata {
+    name      = "payment-app-lb"
+    namespace = "default"
+  }
+  spec {
+    selector = {
+      app = "payment-app"
+    }
+    type = "LoadBalancer"
+    port {
+      port        = 80
+      target_port = 8001
+    }
+  }
+}
+
 resource "kubernetes_deployment" "payment_app" {
+  depends_on = [kubernetes_service.payment_app_lb]
   metadata {
     name      = "payment-app"
     namespace = "default"
@@ -73,29 +91,15 @@ resource "kubernetes_deployment" "payment_app" {
             name  = "MONGO_URI"
             value = data.terraform_remote_state.mongo.outputs.mongo_uri
           }
+          env {
+            name  = "WEBHOOK_URL"
+            value = "http://${kubernetes_service.payment_app_lb.status[0].load_balancer[0].ingress[0].hostname}"
+          }
           port {
             container_port = 8080
           }
         }
       }
-    }
-  }
-}
-
-resource "kubernetes_service" "payment_app_lb" {
-  depends_on = [kubernetes_deployment.payment_app]
-  metadata {
-    name      = "payment-app-lb"
-    namespace = "default"
-  }
-  spec {
-    selector = {
-      app = "payment-app"
-    }
-    type = "LoadBalancer"
-    port {
-      port        = 80
-      target_port = 8001
     }
   }
 }
