@@ -1,3 +1,4 @@
+from ast import alias
 from mongoengine import connect, disconnect
 import os
 
@@ -13,9 +14,10 @@ class MongoDBConfig:
         mongodb_name = os.getenv('MONGO_DB', 'payment_service')
         mongo_user = os.getenv('MONGO_USER', '')
         mongo_password = os.getenv('MONGO_PASSWORD', '')
+        auth_source = os.getenv('AUTH_SOURCE', 'payment_service')
 
         if mongo_user and mongo_password:
-            connection_string = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/{mongodb_name}?authSource=admin"
+            connection_string = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/{mongodb_name}?authSource={auth_source}"
         else:
             connection_string = f"mongodb://{mongo_host}:{mongo_port}"
         
@@ -23,6 +25,7 @@ class MongoDBConfig:
     
     @staticmethod
     def connect_to_database(alias='default'):
+
         """Connect to MongoDB"""
         try:
             # Disconnect existing connection if any
@@ -31,6 +34,12 @@ class MongoDBConfig:
             except:
                 pass
             
+            
+            print("Connecting to MongoDB database...")
+            print(f"Using alias: {alias}")
+            print(f"Connection string: {MongoDBConfig.get_connection_string()}")
+
+            
             connection_string = MongoDBConfig.get_connection_string()
             mongo_db = os.getenv('MONGO_DB', 'payment_service')
             
@@ -38,7 +47,7 @@ class MongoDBConfig:
                 db=mongo_db,
                 host=connection_string,
                 alias=alias,
-                authentication_source='admin'
+                authentication_source='payment_service'
             )
             print(f"Connected to MongoDB: {mongo_db} with alias: {alias}")
         except Exception as e:
@@ -54,9 +63,13 @@ class MongoDBConfig:
         except Exception as e:
             print(f"Error disconnecting from MongoDB: {e}")
 
-
 def connect_db(alias='default'):
     """Connect to MongoDB database"""
+    
+    print("Connecting to MongoDB database...")
+    print(f"Using alias: {alias}")
+    print(f"Connection string: {MongoDBConfig.get_connection_string()}")
+    
     MongoDBConfig.connect_to_database(alias=alias)
 
 
